@@ -193,3 +193,106 @@ router.post('/verify', verifyToken, async (req, res) => {
 
     }
 });
+
+router.post('/resendemail', async (req, res) => {
+
+    try {
+
+        var email = req.body.email;
+        if (!email) {
+            return res.json({ status: 400, message: "Please enter all the required fields" });
+        }
+        var user = await User.findOne({ email });
+        if (!user) {
+            return res.json({ status: 400, message: "email not registered.Please Register" });
+        }
+
+        var token = jwt.sign({ email: user.email }, "damu", { expiresIn: 300 });
+        var redirectUrl = 'http://localhost:3000/api/user/register' + '/' + token;
+
+        readHTMLFile(__dirname + '/../../templates/signUp.html', (err, html) => {
+            if (err) {
+                return res.json({ status: 200, success: false, error: true, message: 'template fetch error' });
+            }
+
+            var template = handlebars.compile(html);
+            var replacements = {
+                username: user.user_name,
+                redirectUrl: redirectUrl,
+            };
+            var htmlToSend = template(replacements);
+            var data = {
+                to: user.email,
+                from: 'support@nextazy.com',
+                subject: 'Confirm your registration!',
+                html: htmlToSend,
+            };
+
+            smtpTransport.sendMail(data, function(err) {
+                if (!err) {
+                    return res.json({ status: 200, success: true, error: false, message: 'Registered Successfully Verification mail has been sent to your email.' });
+                } else {
+                    return res.json({ status: 200, success: false, error: true, message: 'Verification mail not sent. Please try again' + err });
+                }
+            });
+
+        });
+
+
+    } catch (err) {
+        return res.json({ status: 400, message: "something went wrong!Please try again later " + err });
+    }
+});
+
+router.post('/forgotpassword', async(req, res)=>{
+try{
+    var email = req.body.email;
+    if(!email)
+    {
+         return res.json({ status: 400, message: "Please enter all the required fields" });
+    }
+
+    var user = await User.findOne({email});
+    if(!user)
+    {
+        return res.json({ status: 400, message: "Please register" });
+    }
+
+     var token = jwt.sign({ email: user.email }, "damu", { expiresIn: 300 });
+        var redirectUrl = 'http://localhost:3000/api/user/forgotpassword' + '/' + token;
+
+        readHTMLFile(__dirname + '/../../templates/forgotpassword.html', (err, html) => {
+            if (err) {
+                return res.json({ status: 200, success: false, error: true, message: 'template fetch error' });
+            }
+
+            var template = handlebars.compile(html);
+            var replacements = {
+                username: user.user_name,
+                redirectUrl: redirectUrl,
+            };
+            var htmlToSend = template(replacements);
+            var data = {
+                to: user.email,
+                from: 'support@nextazy.com',
+                subject: 'Confirm your registration!',
+                html: htmlToSend,
+            };
+
+            smtpTransport.sendMail(data, function(err) {
+                if (!err) {
+                    return res.json({ status: 200, success: true, error: false, message: 'A link has been sent to your email.' });
+                } else {
+                    return res.json({ status: 200, success: false, error: true, message: 'Please try again' + err });
+                }
+            });
+
+        });
+
+
+
+}catch(err)
+{
+
+}
+});
