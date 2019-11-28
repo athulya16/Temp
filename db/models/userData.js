@@ -4,6 +4,10 @@ var userAuthSchema = mongoose.Schema({
         type: String,
         unique: true,
     },
+    verified:{
+        type: Boolean,
+        default:false,
+    },
     password: {
         type: String,
         required: true,
