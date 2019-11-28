@@ -4,6 +4,18 @@ var userAuthSchema = mongoose.Schema({
         type: String,
         unique: true,
     },
+    tfa:{
+        type:String,
+        default:null,
+    },
+    tfa_temp:{
+        type:String,
+        default:null,
+    },
+    tfa_active:{
+        type:Boolean,
+        default:false,
+    },
     verified:{
         type: Boolean,
         default:false,
