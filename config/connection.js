@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const options = { useNewUrlParser: true, useCreateIndex: true , useUnifiedTopology: true};
 
 // Mongodb connection
-mongoose.connect('mongodb://localhost:27017/userdb', options);
+mongoose.connect('mongodb://localhost:27017/nexfolio', options);
 
 // Mongodb connection success
 mongoose.connection.on('connected', function() {
