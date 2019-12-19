@@ -43,7 +43,7 @@
 
 
 
-let date = Date.now()-2592000000;
+let date = Date.now()-(15*24*60*60*1000);
 let date2 = new Date(date);
 console.log("date",date);
 console.log("dateInUserformat",date2);
